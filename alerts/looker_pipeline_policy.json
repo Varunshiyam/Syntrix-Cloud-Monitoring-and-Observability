@@ -1,0 +1,18 @@
+{
+  "displayName": "Log Streamer Pipeline Errors (Varunshiyam)",
+  "combiner": "OR",
+  "conditions": [
+    {
+      "displayName": "Global - Log entry count",
+      "conditionThreshold": {
+        "filter": "resource.type = \"global\" AND metric.type = \"logging.googleapis.com/log_entry_count\" AND metric.labels.severity = \"ERROR\"",
+        "comparison": "COMPARISON_GT",
+        "duration": "60s",
+        "thresholdValue": 5
+      }
+    }
+  ],
+  "notificationChannels": [
+    "projects/project-4e3f1563-833a-4721-bf7/notificationChannels/12130936411128943761"
+  ]
+}

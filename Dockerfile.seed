@@ -1,0 +1,17 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy shared library
+COPY shared /app/shared
+
+# Copy database package
+COPY database /app/database
+
+ENV PYTHONPATH=/app
+
+CMD ["python", "/app/database/seed_data/seed.py"]

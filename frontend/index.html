@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudMart Enterprise</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="glass-nav">
+        <div class="logo">CloudMart</div>
+        <div class="nav-links">
+            <a href="#dashboard">Dashboard</a>
+            <a href="#catalog">Catalog</a>
+            <a href="#orders">Orders</a>
+            <a href="#cart" class="cart-link">Cart (<span id="cart-count">0</span>)</a>
+        </div>
+    </nav>
+
+    <main id="app">
+        <!-- Dashboard View -->
+        <section id="dashboard" class="view active">
+            <h1>Business Dashboard</h1>
+            <div class="dashboard-grid">
+                <div class="glass-card widget">
+                    <h3>Orders Today</h3>
+                    <p id="dash-orders">0</p>
+                </div>
+                <div class="glass-card widget">
+                    <h3>Revenue</h3>
+                    <p id="dash-revenue">$0.00</p>
+                </div>
+                <div class="glass-card widget">
+                    <h3>Products in Catalog</h3>
+                    <p id="dash-products">0</p>
+                </div>
+            </div>
+            <h2>Recent Orders</h2>
+            <div class="glass-card" id="dash-recent-orders">Loading...</div>
+        </section>
+
+        <!-- Catalog View -->
+        <section id="catalog" class="view">
+            <h1>Product Catalog</h1>
+            <div class="catalog-controls">
+                <input type="text" id="search-input" placeholder="Search products..." class="glass-input">
+                <button id="search-btn" class="btn">Search</button>
+            </div>
+            <div id="product-grid" class="product-grid"></div>
+        </section>
+
+        <!-- Product Detail View -->
+        <section id="product-detail" class="view">
+            <button onclick="navigate('catalog')" class="btn secondary">← Back to Catalog</button>
+            <div class="glass-card product-detail-card" id="product-detail-content"></div>
+        </section>
+
+        <!-- Cart View -->
+        <section id="cart" class="view">
+            <h1>Your Cart</h1>
+            <div class="glass-card" id="cart-content">
+                <p>Cart is empty</p>
+            </div>
+            <div class="cart-actions">
+                <h2 id="cart-total">Total: $0.00</h2>
+                <button id="checkout-btn" class="btn primary">Proceed to Checkout</button>
+            </div>
+        </section>
+
+        <!-- Checkout View -->
+        <section id="checkout" class="view">
+            <h1>Checkout</h1>
+            <div class="glass-card">
+                <h3>Order Summary</h3>
+                <div id="checkout-summary"></div>
+                <button id="confirm-order-btn" class="btn primary">Confirm Order & Pay</button>
+                <p id="checkout-status"></p>
+            </div>
+        </section>
+
+        <!-- Orders View -->
+        <section id="orders" class="view">
+            <h1>Order History</h1>
+            <div class="glass-card" id="orders-list"></div>
+        </section>
+    </main>
+
+    <!-- Hidden Developer Panel (accessed via footer) -->
+    <footer class="glass-footer">
+        <p>&copy; 2026 CloudMart Enterprise. <a href="#" id="dev-panel-toggle">Dev Panel</a></p>
+    </footer>
+
+    <div id="dev-panel" class="dev-panel hidden glass-card">
+        <h3>Developer Control Panel</h3>
+        <button id="close-dev-panel" class="close-btn">&times;</button>
+        
+        <div class="control-group">
+            <label>Payment Simulation</label>
+            <select id="sim-payment">
+                <option value="normal">Normal</option>
+                <option value="20_timeout">20% Timeout</option>
+                <option value="50_timeout">50% Timeout</option>
+                <option value="declined">30% Declined</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Inventory Simulation</label>
+            <select id="sim-inventory">
+                <option value="healthy">Healthy</option>
+                <option value="low_stock">Low Stock (Max 2)</option>
+                <option value="out_of_stock">Out of Stock</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label>Database Simulation</label>
+            <select id="sim-db">
+                <option value="normal">Normal</option>
+                <option value="slow_queries">Slow Queries (1.5s delay)</option>
+            </select>
+        </div>
+
+        <button id="apply-sim-btn" class="btn secondary">Apply Settings</button>
+        <p id="sim-status"></p>
+
+        <hr>
+
+        <div class="control-group">
+            <label>Traffic Simulator</label>
+            <select id="sim-traffic-users">
+                <option value="10">10 users</option>
+                <option value="50">50 users</option>
+                <option value="100">100 users</option>
+                <option value="250">250 users</option>
+            </select>
+            <button id="start-traffic-btn" class="btn warning">Start Traffic</button>
+            <button id="stop-traffic-btn" class="btn error hidden">Stop Traffic</button>
+            <p id="traffic-status">Idle</p>
+        </div>
+    </div>
+
+    <script src="/app.js"></script>
+    <script src="/admin.js"></script>
+</body>
+</html>

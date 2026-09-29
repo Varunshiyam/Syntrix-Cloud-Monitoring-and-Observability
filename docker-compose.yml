@@ -1,0 +1,142 @@
+version: '3.8'
+
+x-service-common: &service-common
+  build:
+    context: .
+    dockerfile: Dockerfile
+  environment:
+    - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/cloudmart
+    - LOG_LEVEL=INFO
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=cloudmart
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  seed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_NAME=database
+    command: python /app/database/seed_data/seed.py
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/cloudmart
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  gateway:
+    <<: *service-common
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_NAME=gateway
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/cloudmart
+      - LOG_LEVEL=INFO
+      - SERVICE_NAME=gateway
+      - CATALOG_URL=http://catalog:8000
+      - CART_URL=http://cart:8000
+      - ORDER_URL=http://order:8000
+      - PAYMENT_URL=http://payment:8000
+      - INVENTORY_URL=http://inventory:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
+
+  catalog:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        - SERVICE_NAME=services/catalog
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/cloudmart
+      - SERVICE_NAME=catalog-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
+
+  cart:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        - SERVICE_NAME=services/cart
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/cloudmart
+      - SERVICE_NAME=cart-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
+
+  order:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        - SERVICE_NAME=services/order
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/cloudmart
+      - SERVICE_NAME=order-service
+      - CART_URL=http://cart:8000
+      - PAYMENT_URL=http://payment:8000
+      - INVENTORY_URL=http://inventory:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
+
+  payment:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        - SERVICE_NAME=services/payment
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/cloudmart
+      - SERVICE_NAME=payment-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
+
+  inventory:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        - SERVICE_NAME=services/inventory
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/cloudmart
+      - SERVICE_NAME=inventory-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully

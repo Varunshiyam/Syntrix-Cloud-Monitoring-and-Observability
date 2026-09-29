@@ -1,0 +1,18 @@
+{
+  "displayName": "GKE High CPU (Akash)",
+  "combiner": "OR",
+  "conditions": [
+    {
+      "displayName": "Kubernetes Container - CPU limit utilization",
+      "conditionThreshold": {
+        "filter": "resource.type = \"k8s_container\" AND metric.type = \"kubernetes.io/container/cpu/limit_utilization\"",
+        "comparison": "COMPARISON_GT",
+        "duration": "180s",
+        "thresholdValue": 0.8
+      }
+    }
+  ],
+  "notificationChannels": [
+    "projects/project-4e3f1563-833a-4721-bf7/notificationChannels/5805533724454815553"
+  ]
+}

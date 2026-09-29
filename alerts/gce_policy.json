@@ -1,0 +1,19 @@
+{
+  "displayName": "GCE High CPU (Roshni & Swathi)",
+  "combiner": "OR",
+  "conditions": [
+    {
+      "displayName": "VM Instance - CPU utilization",
+      "conditionThreshold": {
+        "filter": "resource.type = \"gce_instance\" AND metric.type = \"compute.googleapis.com/instance/cpu/utilization\"",
+        "comparison": "COMPARISON_GT",
+        "duration": "180s",
+        "thresholdValue": 0.85
+      }
+    }
+  ],
+  "notificationChannels": [
+    "projects/project-4e3f1563-833a-4721-bf7/notificationChannels/8316381963341909337",
+    "projects/project-4e3f1563-833a-4721-bf7/notificationChannels/5805533724454814692"
+  ]
+}
