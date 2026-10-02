@@ -414,10 +414,10 @@ chmod +x *.sh
 ## 👥 Hackathon Team & Responsibilities
 
 * **Varunshiyam** — Project Lead, BigQuery Analytics Pipeline, Looker Studio Architecture
-* **Babu Senthil & Mugunthan** — Cloud Run Microservices & Serverless Gateway
-* **Akash** — Google Kubernetes Engine (GKE) Cluster & Microservices Deployment
-* **Roshni & Swathi** — Google Compute Engine (GCE) Virtual Machine Configuration
 * **Ecclesiastes & Emayan** — BigQuery Data Modeling & Log Stream Engineering
+* **Roshni & Swathi** — Google Compute Engine (GCE) Virtual Machine Configuration
+* **Akash** — Google Kubernetes Engine (GKE) Cluster & Microservices Deployment
+* **Babu Senthil & Mugunthan** — Cloud Run Microservices & Serverless Gateway
 
 ---
 
