@@ -27,9 +27,8 @@ jobs:
       - name: Prepare Release Artifacts Bundle
         run: |
           mkdir -p release_dist
-          tar --exclude='.git' --exclude='.sf' --exclude='raw_logs.*' --exclude='__pycache__' --exclude='release_dist' --exclude='release_assets' \
-            -czf release_dist/syntrix-v1.0.0-deployment-bundle.tar.gz \
-            gateway services frontend shared docker docker-compose.yml Dockerfile Dockerfile.seed *.sh bq_views.sql requirements.txt README.md docs Looker_Dashboard_Design.md
+          tar --exclude='./.git' --exclude='./.sf' --exclude='./raw_logs.*' --exclude='./release_dist' --exclude='./release_assets' \
+            -czf release_dist/syntrix-v1.0.0-deployment-bundle.tar.gz .
           
           cp Looker_Dashboard_Design.pdf release_dist/SYNTRIX_Looker_Dashboard_Design_Guide.pdf || true
           cp CLOUDPULSE_Project_Report.pdf release_dist/SYNTRIX_Cloud_Architecture_Report.pdf || true
