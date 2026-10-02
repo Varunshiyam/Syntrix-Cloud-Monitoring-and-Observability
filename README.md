@@ -144,7 +144,7 @@ Core transaction microservices (`order-service` and `payment-service`) are deplo
 The stateful inventory service operates on a dedicated Compute Engine VM (`syntrix-inventory`) located in `asia-south1-a`, equipped with Docker runtime provisioning and Cloud SQL connectivity via instance metadata.
 
 <div align="center">
-  <img src="docs/images/gce_syntrix_inventory_vm.jpg" alt="Google Compute Engine VM Instance Console" width="850" />
+  <img src="docs/images/gce_syntrix_inventory_vm.jpeg" alt="Google Compute Engine VM Instance Console" width="850" />
   <p><b>Figure 2:</b> <i>Google Cloud Console — Compute Engine VM instances displaying <code>syntrix-inventory</code> (Instance ID: 5077291400100541435, Zone: asia-south1-a, Status: Running).</i></p>
 </div>
 
