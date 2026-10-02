@@ -1,5 +1,9 @@
 FROM python:3.12-slim
 
+LABEL org.opencontainers.image.source="https://github.com/Varunshiyam/Syntrix-Cloud-Monitoring-and-Observability"
+LABEL org.opencontainers.image.description="Syntrix Cloud Monitoring and Observability Platform"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
+
 WORKDIR /app
 
 
