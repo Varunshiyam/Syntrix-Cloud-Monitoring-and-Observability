@@ -1,0 +1,97 @@
+name: Package Release & Publish to GitHub Packages
+
+on:
+  release:
+    types: [published, created, edited]
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release tag name (e.g. Syntrix)'
+        required: false
+        default: 'Syntrix'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  upload-release-assets:
+    name: Package & Upload Release Assets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Prepare Release Artifacts Bundle
+        run: |
+          mkdir -p release_dist
+          tar --exclude='.git' --exclude='.sf' --exclude='raw_logs.*' --exclude='__pycache__' --exclude='release_dist' --exclude='release_assets' \
+            -czf release_dist/syntrix-v1.0.0-deployment-bundle.tar.gz \
+            gateway services frontend shared docker docker-compose.yml Dockerfile Dockerfile.seed *.sh bq_views.sql requirements.txt README.md docs Looker_Dashboard_Design.md
+          
+          cp Looker_Dashboard_Design.pdf release_dist/SYNTRIX_Looker_Dashboard_Design_Guide.pdf || true
+          cp CLOUDPULSE_Project_Report.pdf release_dist/SYNTRIX_Cloud_Architecture_Report.pdf || true
+          cp SYNTRIX_DevOps_Interview_Prep.pdf release_dist/SYNTRIX_DevOps_Interview_Prep.pdf || true
+
+          cd release_dist
+          sha256sum * > SHA256SUMS.txt
+          ls -la
+
+      - name: Upload Assets to GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ github.event.release.tag_name || github.event.inputs.tag_name || 'Syntrix' }}
+        run: |
+          gh release upload "$TAG_NAME" release_dist/* --clobber --repo "${{ github.repository }}"
+
+  publish-docker-packages:
+    name: Build & Publish Microservices to GitHub Packages (GHCR)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - service: gateway
+            context: .
+            build_arg: SERVICE_NAME=gateway
+          - service: cart
+            context: .
+            build_arg: SERVICE_NAME=services/cart
+          - service: catalog
+            context: .
+            build_arg: SERVICE_NAME=services/catalog
+          - service: order
+            context: .
+            build_arg: SERVICE_NAME=services/order
+          - service: payment
+            context: .
+            build_arg: SERVICE_NAME=services/payment
+          - service: inventory
+            context: .
+            build_arg: SERVICE_NAME=services/inventory
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set lower case owner name
+        id: repo_owner
+        run: echo "OWNER=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
+      - name: Build and push Docker image to GHCR
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.context }}
+          build-args: ${{ matrix.build_arg }}
+          push: true
+          tags: |
+            ghcr.io/${{ steps.repo_owner.outputs.OWNER }}/syntrix-${{ matrix.service }}:latest
+            ghcr.io/${{ steps.repo_owner.outputs.OWNER }}/syntrix-${{ matrix.service }}:1.0.0
